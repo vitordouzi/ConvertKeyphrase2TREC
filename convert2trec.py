@@ -59,7 +59,7 @@ class Convert(object):
 	    print('\r%s: 100.00%%' % appname)
 	    return ( appname, toreturn )
 	def save_in_trec_format(self, outputpath, appname, results):
-		output_file = os.path.join(outputpath, "%s_%s.out" % (appname, self.datasetid))
+		output_file = os.path.join(outputpath, "%s_%s.out" % (self.datasetid, appname))
 		with open(output_file, 'w') as outfile:
 			for (docid, result) in results:
 				for i, instance in enumerate(result):
@@ -86,8 +86,8 @@ class Convert(object):
 
 	# Type of input results
 	def getconversor(self, method):
-	    if method.startswith('Rake'):
-	        return self.sortedNumericList
+	    if method.startswith('Rake') or method.startswith('Yake'):
+	        return self.sortedNumericList	
 	    return self.nonNumericList
 	def nonNumericList(self, listofkeys):
 		# Only ordered keyphrases
@@ -98,6 +98,13 @@ class Convert(object):
 	        if len(key) > 0:
 	            kw, weight = key.rsplit(' ', 1)
 	            toreturn.append( (float(weight), kw) )
+	    return toreturn
+	def resortedNumericList(self, listofkeys):
+	    toreturn = []
+	    for key in listofkeys:
+	        if len(key) > 0:
+	            kw, weight = key.rsplit(' ', 1)
+	            toreturn.append( (10./(1.+float(weight)), kw) )
 	    return toreturn
 
 	# Matchers: define the type of match to use
