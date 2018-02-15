@@ -86,7 +86,7 @@ class Convert(object):
 
 	# Type of input results
 	def getconversor(self, method):
-	    if method.startswith('Rake') or method.startswith('Yake'):
+	    if method.startswith('Rake') or method.startswith('Yake') or method.startswith('IBM'):
 	        return self.sortedNumericList	
 	    return self.nonNumericList
 	def nonNumericList(self, listofkeys):
@@ -95,9 +95,14 @@ class Convert(object):
 	def sortedNumericList(self, listofkeys):
 	    toreturn = []
 	    for key in listofkeys:
-	        if len(key) > 0:
-	            kw, weight = key.rsplit(' ', 1)
-	            toreturn.append( (float(weight), kw) )
+	        parts = key.rsplit(' ', 1)
+	        if len(key) > 0 and len(parts) > 1:
+	            kw, weight = parts
+	            try:
+	            	weight = float(weight)
+	            except:
+	            	weight = 0.
+	            toreturn.append( (weight, kw) )
 	    return toreturn
 	def resortedNumericList(self, listofkeys):
 	    toreturn = []
