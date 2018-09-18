@@ -1,1 +1,3 @@
 segtok
+tqdm
+nltk
