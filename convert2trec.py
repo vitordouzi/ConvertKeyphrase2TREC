@@ -18,7 +18,7 @@ class Convert(object):
 
         listofresults = glob(path.join(results_dir, self.datasetid, '*'))
         toreturn = []
-        for resultdoc in tqdm(sorted(listofresults), desc=appname, position=3):
+        for resultdoc in tqdm(sorted(listofresults), desc=appname, position=4):
             docid = self.__get_docid__(resultdoc)
             if docid not in self.qrels:
                 print('[WARNING] Documento %s not fount in qrels' % docid)
@@ -60,7 +60,7 @@ class Convert(object):
     def build_ground_truth(self):
         keysfiles = glob(path.join(self.datasetdir, 'keys','*'))
         self.qrels = {}
-        for keyfile in tqdm(keysfiles, desc='Building Ground Truth (%s)' % self.datasetid, position=1):
+        for keyfile in tqdm(keysfiles, desc='Building Ground Truth (%s)' % self.datasetid, position=2):
             docid = self.__get_docid__(keyfile)
             gt = {}
             keysunfiltered = self.__readfile__(keyfile).split('\n')
@@ -157,11 +157,11 @@ parser.add_argument('-o','--output', type=str, nargs='?', help='Output path.', d
 parser.add_argument('-f','--filter', type=str, nargs='+', help='Filter method.', default=['none'], choices=['none', 'stem'])
 
 args = parser.parse_args()
-for datasetdir in args.datasetdir: 
+for datasetdir in tqdm(args.datasetdir, position=1, desc='Datasets'): 
     conv = Convert(datasetdir, listoffilters=args.filter)
     conv.build_ground_truth()
 
-    for results in tqdm(args.results, position=2, desc=conv.datasetid):
+    for results in tqdm(args.results, position=3, desc=conv.datasetid):
         ( appname, results_processed ) = conv.build_result(results)
         conv.save_in_trec_format(args.output, appname, results_processed)
     conv.save_qrel(args.output)
